@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<!--{% set items = items|sort(reverse=true, attribute="date_added") %} -->
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- empty -->
+    </div>
+    <div class="col-md-6">
+        <h4>My Watchlist</h4>
+    </div>
+    <div class="col-md-3">
+        <div class="section-centred">
+            <button type="button" class="btn btn-theme">Edit</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+
+    <div class="bg-theme-light section-centred col-md-10">
+
+        {% if not items %}
+        <h3>Watchlist is empty</h3>
+        {% endif %}
+
+        {% for item in items %}
+        <!-- item no. 1 -->
+        <div class="bg-theme-light section-reviews col-md-11">
+
+            <div class="card">
+                <div class="row main-section">
+
+                    <!-- column for image -->
+                    <div class="col-md-4 col-sm-4">
+                        <img class="card-img-left" src="{{ item.item.image }}" alt="Pokemon Moon for 3DS">
+                    </div>
+
+                    <!-- column for auction details -->
+                    <div class="col-md-6 col-sm-6">
+                        <div class="card-body">
+                            <h5><b>{{  item.item.title }}</b></h5>
+                            <p>
+                                <b>Listed by: </b> {{  item.item.user.user_name }}<br>
+                                <b>Date added: </b>{{  item.item.date_listed.strftime('%d/%m/%Y') }}<br>
+                            </p>
+                            <div class="dropdown-divider"></div>
+                            <p>
+                                {% if item.item.is_active == 0 %}
+                                <b>Status: <span class="redText">Not Active</span></b><br>
+                                {% else %}
+                                <b>Status: <span class="greenText">Active</span></b><br>
+                                {% endif %}
+                                <b>Bids: </b>{{  numBidsDict[item.id] }}<br>
+                                <b>Highest bid: </b>${{"%.2f"|format(item.item.current_bid)}}<br>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- column for view button -->
+                    <div class="col-md-2 col-sm-2 section-centred">
+                        <a class="btn btn-theme" href="/items/{{ item.item.id }}" role="button">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}

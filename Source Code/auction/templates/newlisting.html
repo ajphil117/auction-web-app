@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Create a listing</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="bg-theme-light section-centred col-md-5">
+        <div class="col-md-12">
+            <div class="bg-theme-light section">
+                <h6>Fill in fields below:</h6>
+    
+                {{wtf.quick_form(form)}}
+            </div>
+        </div>
+    </div>
+    
+
+    {% endblock %}

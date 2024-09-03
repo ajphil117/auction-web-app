@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Register</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="bg-theme-light section">
+            <!-- phone number -->
+            <form method="POST">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.phone_number) }}
+                    </div>
+                </div>
+
+                <!-- email -->
+
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.email_id) }}
+                    </div>
+                </div>
+
+
+                <hr>
+
+                <!-- username -->
+
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.user_name) }}
+                    </div>
+                </div>
+
+
+                <!-- password -->
+
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.password) }}
+                    </div>
+                </div>
+
+                <!-- verify password -->
+
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.confirm) }}
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+        <div class="bg-theme-light section">
+            <!-- address details -->
+
+            <div class="main-section col-md-8 col-7">
+                <div class="form-field">
+                    {{ wtf.form_field(form.address_line1) }}
+                </div>
+            </div>
+
+
+            <div class="main-section col-md-8 col-7">
+                <div class="form-field">
+                    {{ wtf.form_field(form.address_line2) }}
+                </div>
+            </div>
+
+
+            <div class="main-section col-md-8 col-7">
+                <div class="form-field">
+                    {{ wtf.form_field(form.state) }}
+                </div>
+            </div>
+
+
+            <div class="main-section col-md-8 col-7">
+                <div class="form-field">
+                    {{ wtf.form_field(form.zip) }}
+                </div>
+            </div>
+
+
+            <hr>
+
+            <!-- register btn -->
+            <div class="centre-btn">
+                <button type="submit" class="btn btn-theme">
+                    Register
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="footer-text col-md-12">
+        <h6>
+            Already have an account?
+            <a class="h6-nav-link" href={{url_for("auth.login")}}>Log in now.</a>
+        </h6>
+    </div>
+</div>
+{% endblock %}
+</body>

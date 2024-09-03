@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Login</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="bg-theme-light section-centred col-md-5">
+        <div class="bg-theme-light">
+            <!-- username -->
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.user_name) }}
+                    </div>
+                </div>
+                <!-- password -->
+                <div class="main-section col-md-8 col-7">
+                    <div class="form-field">
+                        {{ wtf.form_field(form.password) }}
+                    </div>
+                </div>
+
+
+                <!-- login btn -->
+                <div class="centre-btn">
+                    <button type="submit" class="btn btn-theme" data-toggle="modal" data-target="#bidModal">
+                        Login
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="footer-text col-md-12">
+        <h6>
+            Don't have an account?
+            <a class="h6-nav-link" href={{url_for("auth.register")}}>Sign up now.</a>
+        </h6>
+    </div>
+</div>
+
+{% endblock %}

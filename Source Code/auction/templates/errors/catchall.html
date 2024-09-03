@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+<div class="column text-center">
+    <br/>
+    <h1>Something Went Wrong...</h1>
+    <br/>
+    <h3>Sorry, something has gone wrong, click <a href='{{ url_for("main.index") }}'>here</a> to go back to the home page.</h3>    
+</div>
+
+{% endblock %}

@@ -1,0 +1,628 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<!-- sidebar for filters -->
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-lg-2 col-md-2 bg-theme-med sidebar">
+      <div class="sidebar-sticky">
+
+        <!-- list of genres -->
+        <ul class="nav flex-column">
+          <h6>Genres</h6>
+
+          <li class="nav-item">
+            <a class="nav-link" href="genre?search_term=Action">Action</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="genre?search_term=Fantasy">Fantasy</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="genre?search_term=Sports">Sports</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="genre?search_term=Family/Kids">Family/Kids</a>
+          </li>
+
+        <!-- divider -->
+        <hr />
+
+        <!-- list of PLATFORMS -->
+        <ul class="nav flex-column">
+          <h6>Platforms</h6>
+
+          <li class="nav-item">
+            <a class="nav-link" href="platform?search_term=3DS">3DS</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="platform?search_term=Wii">Wii</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="platform?search_term=Switch">Switch</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="platform?search_term=Xbox">Xbox</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="platform?search_term=PS4">PS4</a>
+          </li>
+
+          <!-- divider -->
+        <hr />
+
+        <!-- list of YEARS -->
+        <ul class="nav flex-column">
+          <h6>Release Year</h6>
+
+          <li class="nav-item">
+            <a class="nav-link" href="year?search_term=2020">2020</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="year?search_term=2019">2019</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="year?search_term=2018">2018</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="year?search_term=2017">2017</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="year?search_term=2016">2016</a>
+          </li>
+
+        <!-- divider -->
+        <hr />
+
+      </div>
+    </nav>
+
+    {% if items %}   <!-- all items ... no search -->
+   
+
+    <!-- list of recent listings: newest first -->
+    {% set recent = items|sort(reverse=true, attribute="date_listed") %}
+
+
+    <div class="main-section col-lg-9 col-md-10 col-12">
+      <div class="container">
+
+
+        <!-- ____________________________ RECENT __________________________ -->
+
+        <h4>Recently Listed</h4>
+
+        <!-- carousel for items -->
+        <div class="row">
+          <div id="carousel_recent" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+
+              <!-- first slide -->
+              <div class="carousel-item active">
+
+                <!-- album -->
+                <div class="album py-5 bg-theme-light">
+                  <div class="container">
+
+                    <div class="row">
+
+                      <!-- first three items in recent list -->
+                      {% for i in range(0, 3) %}
+                      <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                          <img class="card-img-top" src="{{recent[i].image}}"
+                            alt="{{recent[i].title}} for {{recent[i].platform}}">
+                          <div class="card-body">
+                            <p class="card-text">
+                              <b>{{recent[i].title}}</b>
+                              <br>    
+                              
+                              ${{"%.2f"|format(recent[i].current_bid)}} 
+
+                              <br>
+
+                              {{numBidsDict[recent[i].id]}} Bids
+
+                              <br>
+
+                              {{numWatchDict[recent[i].id]}} Watching
+
+                            </p>
+                            <p class="card-text">
+                              <b>
+                                <!-- display bid status -->
+                                {% if recent[i].is_active %}
+                                  <span class="greenText">Active</span>
+                                {% else %}
+                                  <span class="redText">Closed</span>
+                                {% endif %}
+                              </b>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                              <a class="btn btn-theme" href="items/{{ recent[i].id }}" role="button">View</a>
+                              <small class="text-muted">
+                                <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                                {% if recent[i].date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                                 Today {{ recent[i].date_listed.strftime('%H:%M') }} 
+                              {% else %}
+                                 {{ recent[i].date_listed.strftime('%d/%m/%Y') }} 
+                              {% endif %}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- second slide -->
+              <div class="carousel-item">
+                <div class="carousel-item active">
+
+                  <!-- album -->
+                  <div class="album py-5 bg-theme-light">
+                    <div class="container">
+
+                      <div class="row">
+
+                        <!-- next three items in recent list -->
+                        {% for i in range(3, 6) %}
+                        <div class="col-md-4">
+                          <div class="card mb-4 shadow-sm">
+                            <img class="card-img-top" src="{{recent[i].image}}"
+                              alt="{{recent[i].title}} for {{recent[i].platform}}">
+                            <div class="card-body">
+                              <p class="card-text">
+                                <b>{{recent[i].title}}</b>
+                                <br>    
+                                
+                                ${{"%.2f"|format(recent[i].current_bid)}} 
+
+                                <br>
+
+                                {{numBidsDict[recent[i].id]}} Bids
+
+                                <br>
+
+                                {{numWatchDict[recent[i].id]}} Watching
+
+                              </p>
+                              <p class="card-text">
+                                <b>
+                                  <!-- display bid status -->
+                                  {% if recent[i].is_active %}
+                                    <span class="greenText">Active</span>
+                                  {% else %}
+                                    <span class="redText">Closed</span>
+                                  {% endif %}
+                                </b>
+                              </p>
+                              <div class="d-flex justify-content-between align-items-center">
+                                <a class="btn btn-theme" href="items/{{ recent[i].id }}" role="button">View</a>
+                                <small class="text-muted">
+                                  <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                                  {% if recent[i].date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                                   Today {{ recent[i].date_listed.strftime('%H:%M') }} 
+                                {% else %}
+                                   {{ recent[i].date_listed.strftime('%d/%m/%Y') }} 
+                                {% endif %}
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+  
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carousel_recent" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel_recent" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ____________________________ TOP 5 __________________________ -->
+
+      <!-- uses top_items dictionary defines in views.py -->
+
+      <div class="container">
+        <!--ROW TWO: Top -->
+        <h4>Top 5</h4>
+
+        <!-- carousel for items -->
+        <div class="row">
+          <div id="carousel_top" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+
+              <!-- first slide -->
+              <div class="carousel-item active">
+
+                <!-- album -->
+                <div class="album py-5 bg-theme-light">
+                  <div class="container">
+
+                    <div class="row">
+
+                      {% for i in range(0, 3) %}
+                      {% for item in items %}
+                        {% if top_items[i] == item.id %}
+                        <div class="col-md-4">
+                          <div class="card mb-4 shadow-sm">
+                            <img class="card-img-top" src="{{item.image}}"
+                            alt="{{item.title}} for {{item.platform}}">
+                            <div class="card-body">
+                              <p class="card-text">
+                                <b>{{item.title}}</b>
+                                <br>    
+                                
+                                ${{"%.2f"|format(item.current_bid)}} 
+
+                                <br>
+
+                                {{numBidsDict[item.id]}} Bids
+
+                                <br>
+
+                                {{numWatchDict[item.id]}} Watching
+
+                              </p>
+                              <p class="card-text">
+                                <b>
+                                  <!-- display bid status -->
+                                  {% if item.is_active %}
+                                    <span class="greenText">Active</span>
+                                  {% else %}
+                                    <span class="redText">Closed</span>
+                                  {% endif %}
+                                </b>
+                              </p>
+                              <div class="d-flex justify-content-between align-items-center">
+                                <a class="btn btn-theme" href="items/{{ item.id }}" role="button">View</a>
+                                <small class="text-muted">
+                                  <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                                  {% if item.date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                                   Today {{ item.date_listed.strftime('%H:%M') }} 
+                                {% else %}
+                                   {{ item.date_listed.strftime('%d/%m/%Y') }} 
+                                {% endif %}
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% endif %}
+                      {% endfor %}
+                    {% endfor %}
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- second slide -->
+              <div class="carousel-item">
+                <div class="carousel-item active">
+
+                  <!-- album -->
+                  <div class="album py-5 bg-theme-light">
+                    <div class="container">
+
+                      <div class="row">
+
+                        {% for i in range(3, 5) %}
+                        {% for item in items %}
+                          {% if top_items[i] == item.id %}
+                          <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                              <img class="card-img-top" src="{{item.image}}"
+                              alt="{{item.title}} for {{item.platform}}">
+                              <div class="card-body">
+                                <p class="card-text">
+                                  <b>{{item.title}}</b>
+                                  <br>    
+                                  
+                                  ${{"%.2f"|format(item.current_bid)}} 
+
+                                  <br>
+
+                                  {{numBidsDict[item.id]}} Bids
+  
+                                  <br>
+  
+                                  {{numWatchDict[item.id]}} Watching
+                                </p>
+                                <p class="card-text">
+                                  <b>
+                                    <!-- display bid status -->
+                                    {% if item.is_active %}
+                                      <span class="greenText">Active</span>
+                                    {% else %}
+                                      <span class="redText">Closed</span>
+                                    {% endif %}
+                                  </b>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                  <a class="btn btn-theme" href="items/{{ item.id }}" role="button">View</a>
+                                  <small class="text-muted">
+                                    <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                                    {% if item.date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                                     Today {{ item.date_listed.strftime('%H:%M') }} 
+                                  {% else %}
+                                     {{ item.date_listed.strftime('%d/%m/%Y') }} 
+                                  {% endif %}
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carousel_top" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel_top" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ____________________________ FOR YOU __________________________ -->
+
+      <!-- in a real application, an algorithm would be used to suggest items
+      the user may like based on their activity (watching, bidding, etc) -->
+
+      <!-- in this case, the first 6 items in the database are displayed -->
+
+      <div class="container">
+
+        <h4>For You</h4>
+
+        <!-- carousel for items -->
+        <div class="row">
+          <div id="carousel_foryou" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+
+              <!-- first slide -->
+              <div class="carousel-item active">
+
+                <!-- album -->
+                <div class="album py-5 bg-theme-light">
+                  <div class="container">
+
+                    <div class="row">
+
+                      <!-- first three items in items list -->
+                      {% for i in range(0, 3) %}
+                      <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                          <img class="card-img-top" src="{{items[i].image}}"
+                            alt="{{items[i].title}} for {{items[i].platform}}">
+                          <div class="card-body">
+                            <p class="card-text">
+                              <b>{{items[i].title}}</b>
+                              <br>    
+                              
+                              ${{"%.2f"|format(items[i].current_bid)}} 
+
+                              <br>
+
+                              {{numBidsDict[items[i].id]}} Bids
+
+                              <br>
+
+                              {{numWatchDict[items[i].id]}} Watching
+
+                            </p>
+                            <p class="card-text">
+                              <b>
+                                <!-- display bid status -->
+                                {% if items[i].is_active %}
+                                  <span class="greenText">Active</span>
+                                {% else %}
+                                  <span class="redText">Closed</span>
+                                {% endif %}
+                              </b>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                              <a class="btn btn-theme" href="items/{{ items[i].id }}" role="button">View</a>
+                              <small class="text-muted">
+                                <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                                {% if items[i].date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                                 Today {{ items[i].date_listed.strftime('%H:%M') }} 
+                              {% else %}
+                                 {{ items[i].date_listed.strftime('%d/%m/%Y') }} 
+                              {% endif %}
+                              </small>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% endfor %}
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- second slide -->
+              <div class="carousel-item">
+                <div class="carousel-item active">
+
+                  <!-- album -->
+                  <div class="album py-5 bg-theme-light">
+                    <div class="container">
+
+                      <div class="row">
+
+                        <!-- next three items in items list -->
+                        {% for i in range(3, 6) %}
+                        <div class="col-md-4">
+                          <div class="card mb-4 shadow-sm">
+                            <img class="card-img-top" src="{{items[i].image}}"
+                              alt="{{items[i].title}} for {{items[i].platform}}">
+                            <div class="card-body">
+                              <p class="card-text">
+                                <b>{{items[i].title}}</b>
+                                <br>   
+
+                                ${{"%.2f"|format(items[i].current_bid)}} 
+
+                                <br>
+
+                                {{numBidsDict[items[i].id]}} Bids
+
+                                <br>
+
+                                {{numWatchDict[items[i].id]}} Watching
+
+                              </p>
+                              <p class="card-text">
+                                <b>
+                                  <!-- display bid status -->
+                                  {% if items[i].is_active %}
+                                    <span class="greenText">Active</span>
+                                  {% else %}
+                                    <span class="redText">Closed</span>
+                                  {% endif %}
+                                </b>
+                              </p>
+                              <div class="d-flex justify-content-between align-items-center">
+                                <a class="btn btn-theme" href="items/{{ items[i].id }}" role="button">View</a>
+                                <small class="text-muted">
+                                  <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                                  {% if items[i].date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                                   Today {{ items[i].date_listed.strftime('%H:%M') }} 
+                                {% else %}
+                                   {{ items[i].date_listed.strftime('%d/%m/%Y') }} 
+                                {% endif %}
+                                </small>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+  
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="carousel-control-prev" href="#carousel_foryou" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carousel_foryou" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {% else %} <!-- a search has been made -->
+
+      <div class="container">
+        <h4>Search Results for "{{search_term}}"</h4>
+        <div class="album py-5 bg-theme-light">
+          <div class="container">
+            <div class="row">      
+            {% for item in results %}
+            <div class="col-md-4">
+              <div class="card mb-4 shadow-sm">
+                <img class="card-img-top" src="{{item.image}}"
+                  alt="{{item.title}} for {{item.platform}}">
+                <div class="card-body">
+                  <p class="card-text">
+                    <b>{{item.title}}</b>
+                    <br>  
+
+                    ${{"%.2f"|format(item.current_bid)}}           
+                    
+                    <br>
+
+                    {{numBidsDict[item.id]}} Bids
+
+                    <br>
+
+                    {{numWatchDict[item.id]}} Watching
+
+                  </p>
+                  <p class="card-text">
+                    <b>
+                      <!-- display bid status -->
+                      {% if item.is_active %}
+                        <span class="greenText">Active</span>
+                      {% else %}
+                        <span class="redText">Closed</span>
+                      {% endif %}
+                    </b>
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <a class="btn btn-theme" href="items/{{ item.id }}" role="button">View</a>
+                    <small class="text-muted">
+                      <!-- if listed today, display hh:mm. otherwise, display dd/mm/yyyy -->
+                      {% if item.date_listed.strftime('%d/%m/%Y') == datetime_now.strftime('%d/%m/%Y')%}
+                       Today {{ item.date_listed.strftime('%H:%M') }} 
+                    {% else %}
+                       {{ item.date_listed.strftime('%d/%m/%Y') }} 
+                    {% endif %}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}  <!-- if items ? -->
+
+  {% endblock %}

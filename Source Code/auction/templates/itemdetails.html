@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+<!-- Page Title -->
+<div class="row">
+    <!-- full sized column for page title -->
+    <div class="col-md-12">
+        <h4>Auction details</h4>
+    </div>
+</div>
+
+<!-- Item Details Section -->
+<div class="row section">
+
+    <!-- 1/4 sized column for Item Image -->
+    <div class="col-md-3">
+        <div>
+            <img class="card-img-top" img src="{{ item.image }}" alt="Image for {{ item.name }}" class="img-thumbnail">
+        </div>
+    </div>
+
+    <!-- 1/2 sized column for Item Text -->
+    <div class="col-md-6">
+        <div>
+
+            <h5><b>{{ item.title }}</b></h5>
+
+            <p>
+                <i>Listed by <b>{{ item.user.user_name }}</b> on <b>{{ item.date_listed.strftime('%d/%m/%Y') }}</b></i>
+            </p>
+
+            <p>
+                <b>Status:
+                    {% if item.is_active == 1 %}
+                    <span class="greenText">
+                        Active
+                    </span>
+                    {% else %}
+                    <span class="redText">
+                        Closed
+                    </span>
+                    {% endif %}
+                </b>
+            </p>
+
+            <p>
+                <b>Genre: </b>{{ item.genre }}<br>
+                <b>Platform: </b>{{ item.platform }}<br>
+                <b>Classification: </b>{{ item.classification}}<br>
+                <b>Release year: </b>{{ item.release_year }}<br>
+                <b>Description: </b> {{ item.description}}
+            </p>
+
+        </div>
+    </div>
+
+    <!-- 1/4 sized column for Item Bid and Buttons -->
+    <div class="text-centre col-md-3">
+        <div>
+
+            <h5><b>Current bid:</b></h5>
+            <h2><b>
+                    <!-- if item is active or inavtive -->
+                    {% if item.is_active == 1 %}
+
+                        ${{"%.2f"|format(item.current_bid)}} 
+
+                    {% else %}
+                    <span class="greenText">
+                        Auction won!
+                    </span>
+                    {% endif %}
+                </b></h2>
+        </div>
+
+        <div>
+            <p><i>Starting bid was ${{"%.2f"|format(item.starting_bid)}}</i></p>
+        </div>
+
+
+        <!-- Buttons -->
+
+        <div>
+
+            <!-- when current user is the poster -->
+            {% if current_user.id == item.user_id %}
+                <!-- see bids -->
+                <!-- modal trigger button -->
+                <div class="centre-btn">
+                    <button type="button" class="btn btn-theme" data-toggle="modal" data-target="#bidModal">
+                        See Bids
+                    </button>
+                </div>
+
+                <!-- all bids modal -->
+                <!-- <div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true"> -->
+                <div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="FormModal" aria-hidden="true">
+
+                    <div class="modal-dialog modal-sm">
+
+                        <!-- Modal content -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bidModalLabel">All Bids</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    
+                                    <table class="table table-bordered">
+                                        <!-- Table head -->
+                                        <thead>
+                                            <tr>
+                                                <th>Bid Number</th>
+                                                <th>Bid Amount</th>
+                                                <th>User Name</th>
+                                            </tr>
+                                        </thead>
+
+                                        <!-- Table body -->
+                                        <tbody>
+                                            {% set bid_num = 0 %}
+
+                                            {% for bid in item.bids %}
+                                                <tr>
+                                                    <td>{{ loop.index }}</td>
+                                                    <td>${{"%.2f"|format(bid.bid_amount)}}</td>
+                                                    <td>
+                                                        {% for user in users %}
+                                                            {% if user.id == bid.user_id %}
+                                                                {{user.user_name}}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- close/open auction -->
+                {% if item.is_active == 1 %}
+                <div class="centre-btn">
+                    <div class="btn btn-theme">
+                        {{wtf.quick_form(form3, "/items/{0}/close".format(item.id))}}
+                    </div>
+                </div>                
+                {% else %}
+                <div class="centre-btn">
+                    <div class="btn btn-theme">
+                        {{wtf.quick_form(form4, "/items/{0}/open".format(item.id))}}
+                    </div>
+                </div>
+                {% endif %}
+
+            <!-- current user is a potential buyer -->
+            {% else %}
+                <!-- place bid -->
+                <!-- modal trigger button -->
+                {% if item.is_active == 1 %}
+                <div class="centre-btn">
+                    <button type="button" class="btn btn-theme" data-toggle="modal" data-target="#bidModal">
+                        Place a bid
+                    </button>
+                </div>
+                {% else %}
+                <div class="centre-btn">
+                    <button type="button" class="btn btn-theme" data-toggle="modal" data-target="#bidModal" disabled>
+                        Place a bid
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- bid modal -->
+                <!-- <div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="bidModalLabel" aria-hidden="true"> -->
+                <div class="modal fade" id="bidModal" tabindex="-1" aria-labelledby="FormModal" aria-hidden="true">
+
+                    <div class="modal-dialog modal-sm">
+
+                        <!-- Modal content -->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="bidModalLabel">Your Bid</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="form-group row">
+                                    {{wtf.quick_form(form1, "/items/{0}/bid".format(item.id))}}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                    <!-- watch button -->
+                    {% if watching == true %}
+                        <div class="centre-btn">
+                            <button type="button" class="btn btn-theme" disabled>Watching</button>
+                        </div>
+                    {% else %}
+                        {% if item.is_active == 1 %}
+                        <div class="centre-btn">
+                            <div class="btn btn-theme">
+                                {{wtf.quick_form(form5, "/items/{0}/watch".format(item.id))}}
+                            </div>
+                        </div>    
+                        {% else %}
+                            <div class="centre-btn">
+                                <button type="button" class="btn btn-theme" disabled>Watch</button>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+<!-- review section-->
+<div class="row">
+    <!-- full sized column for page title -->
+    <div class="bg-theme-light section-centred col-md-10">
+        <h6>Reviews</h6>
+
+        <!-- text entry for user -->
+        <div class="bg-theme-light section-reviews col-md-8">
+            {{wtf.quick_form(form2, "/items/{0}/comment".format(item.id))}}
+        </div>
+
+        <!-- divider -->
+        <hr />
+
+        <!-- reviews  -->
+        {% for comment in item.comments %}
+        <div class="bg-theme-light section-reviews col-md-8">
+
+            <!-- header row: username + timestamp -->
+            <div class="row">
+                <p>
+                    <b>{{ comment.user.user_name }}</b>
+                </p>
+                <div class="timestamp-light">
+                    <p>
+                        <i>{{ comment.created_at.strftime('%d/%m/%Y %H:%M') }}</i>
+                    </p>
+                </div>
+            </div>
+            <!-- second row: review text -->
+            <div class="row">
+                <p>
+                    {{ comment.text }}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %}
